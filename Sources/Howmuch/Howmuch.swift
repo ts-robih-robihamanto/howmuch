@@ -1,6 +1,7 @@
 public struct Howmuch {
-    public private(set) var text = "Hello, World!"
 
-    public init() {
+    public func convert(from: String, to: String, amount: Int) -> Int {
+        return amount * 100
     }
+
 }
