@@ -6,8 +6,10 @@ internal protocol ExchangeMoneyServiceType {
 }
 
 internal enum ExchangeMoneyServiceError: Error {
+    case jsonDecodingError(Error)
     case requestError(RequestError)
-    case missingOrInvalidConfigURL
+    case missingOrInvalidApiURL
+    case internalServerError(UInt)
 }
 
 internal struct ExchangeMoneyService: ExchangeMoneyServiceType {
@@ -23,15 +25,39 @@ internal struct ExchangeMoneyService: ExchangeMoneyServiceType {
 
     func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int) -> Result<Double, ExchangeMoneyServiceError> {
         let convertCurrencyURLString = ApiEndpoint.baseURL + "/convert"
-//        guard let apiKey = exchangeMoneyRepository.get
-            guard let convertCurrencyURL = URL(string: convertCurrencyURLString) else {
-            return.failure(.missingOrInvalidConfigURL)
+        guard let convertCurrencyURL = URL(string: convertCurrencyURLString) else {
+            return.failure(.missingOrInvalidApiURL)
         }
 
-        let response = requestFromServerSync(url: convertCurrencyURL, httpMethod: .get, addtionalHeaders: <#T##[HeaderAttribute]?#>)
+        let response = requestFromServerSync(
+            url: convertCurrencyURL,
+            httpMethod: .get,
+            addtionalHeaders: buildRequestHeader())
         
-        
-        return .success(0)
+        switch response {
+        case .success((let data, _)):
+            return parseResponse(data).mapError {
+                return ExchangeMoneyServiceError.jsonDecodingError($0)
+            }
+        case .failure(let requestError):
+            switch requestError {
+            case .httpError(let statusCode, _, _) where statusCode >= 500:
+                return .failure(.internalServerError(statusCode))
+            default:
+                return .failure(.requestError(requestError))
+            }
+        }
+    }
+
+    private func parseResponse(_ response: Data) -> Result<Double, Error> {
+        do {
+            let response = try JSONDecoder().decode(CurrencyExchangeResponse.self, from: response)
+            return .success(response.result)
+        } catch {
+            let description = "Failed to parse json"
+            RLogger.debug(message: "\(description): \(error)")
+            return .failure(error)
+        }
     }
 
 }
@@ -68,6 +94,17 @@ extension ExchangeMoneyService: HttpRequestable {
 
     func buildHttpBody(with parameters: [String : Any]?) -> Result<Data, Error> {
         .failure(RequestError.bodyIsNil)
+    }
+
+    private func buildRequestHeader() -> [HeaderAttribute] {
+        var headerBuilder = HeaderAttributesBuilder()
+
+        if !headerBuilder.addApiKey(exchangeMoneyRepository: exchangeMoneyRepository) {
+            RLogger.debug(message: "Must contain a valid apiKey for ApiLayer")
+            assertionFailure()
+        }
+
+        return headerBuilder.build()
     }
 
 }
