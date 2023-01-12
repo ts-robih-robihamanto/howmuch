@@ -1,13 +1,13 @@
 import Foundation
 
-internal protocol ExchangeMoneyRepositoryType: AnyObject {
+internal protocol CurrencyExchangeRepositoryType: AnyObject {
     var defaultHttpSessionConfiguration: URLSessionConfiguration { get }
 
     func saveHowmuchModuleConfiguration(_ config: HowmuchModuleConfiguration)
     func getApiKey() -> String?
 }
 
-internal class ExchangeMoneyRepository: ExchangeMoneyRepositoryType {
+internal class CurrencyExchangeRepository: CurrencyExchangeRepositoryType {
 
     private(set) var howmuchModuleConfiguration: HowmuchModuleConfiguration?
     private(set) var defaultHttpSessionConfiguration: URLSessionConfiguration = {

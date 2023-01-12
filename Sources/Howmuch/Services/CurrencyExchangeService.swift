@@ -1,29 +1,29 @@
 import Foundation
 import RLogger
 
-internal protocol ExchangeMoneyServiceType {
-    func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int) -> Result<Double, ExchangeMoneyServiceError>
+internal protocol CurrencyExchangeServiceType {
+    func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int) -> Result<Double, CurrencyExchangeServiceError>
 }
 
-internal enum ExchangeMoneyServiceError: Error {
+internal enum CurrencyExchangeServiceError: Error {
     case jsonDecodingError(Error)
     case requestError(RequestError)
     case missingOrInvalidApiURL
     case internalServerError(UInt)
 }
 
-internal struct ExchangeMoneyService: ExchangeMoneyServiceType {
+internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
 
-    private let exchangeMoneyRepository: ExchangeMoneyRepositoryType
+    private let currencyExchangeRepository: CurrencyExchangeRepositoryType
     private(set) var httpSession: URLSession
     private typealias ApiEndpoint = Constants.ApiEndpoint
 
-    init(exchangeMoneyRepository: ExchangeMoneyRepositoryType) {
-        self.exchangeMoneyRepository = exchangeMoneyRepository
-        self.httpSession = URLSession(configuration: exchangeMoneyRepository.defaultHttpSessionConfiguration)
+    init(currencyExchangeRepository: CurrencyExchangeRepositoryType) {
+        self.currencyExchangeRepository = currencyExchangeRepository
+        self.httpSession = URLSession(configuration: currencyExchangeRepository.defaultHttpSessionConfiguration)
     }
 
-    func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int) -> Result<Double, ExchangeMoneyServiceError> {
+    func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int) -> Result<Double, CurrencyExchangeServiceError> {
         let convertCurrencyURLString = ApiEndpoint.baseURL + "/convert"
         guard let convertCurrencyURL = URL(string: convertCurrencyURLString) else {
             return.failure(.missingOrInvalidApiURL)
@@ -37,7 +37,7 @@ internal struct ExchangeMoneyService: ExchangeMoneyServiceType {
         switch response {
         case .success((let data, _)):
             return parseResponse(data).mapError {
-                return ExchangeMoneyServiceError.jsonDecodingError($0)
+                return CurrencyExchangeServiceError.jsonDecodingError($0)
             }
         case .failure(let requestError):
             switch requestError {
@@ -62,7 +62,7 @@ internal struct ExchangeMoneyService: ExchangeMoneyServiceType {
 
 }
 
-extension ExchangeMoneyService: HttpRequestable {
+extension CurrencyExchangeService: HttpRequestable {
     
     func requestFromServerSync(url: URL,
                                httpMethod: HttpMethod,
@@ -99,7 +99,7 @@ extension ExchangeMoneyService: HttpRequestable {
     private func buildRequestHeader() -> [HeaderAttribute] {
         var headerBuilder = HeaderAttributesBuilder()
 
-        if !headerBuilder.addApiKey(exchangeMoneyRepository: exchangeMoneyRepository) {
+        if !headerBuilder.addApiKey(currencyExchangeRepository: currencyExchangeRepository) {
             RLogger.debug(message: "Must contain a valid apiKey for ApiLayer")
             assertionFailure()
         }

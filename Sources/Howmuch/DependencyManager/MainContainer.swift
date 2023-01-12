@@ -7,8 +7,8 @@ internal enum MainContainerFactory {
 
     static func create(dependencyManager manager: TypedDependencyManager) -> TypedDependencyManager.Container {
         let elements = [
-            ContainerElement(type: ExchangeMoneyRepository.self, factory: {
-                ExchangeMoneyRepository()
+            ContainerElement(type: CurrencyExchangeRepository.self, factory: {
+                CurrencyExchangeRepository()
             })
         ]
         return TypedDependencyManager.Container(elements)

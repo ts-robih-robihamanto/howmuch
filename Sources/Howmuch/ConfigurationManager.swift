@@ -5,17 +5,17 @@ internal protocol ConfigurationManagerType {
 }
 
 internal class ConfigurationManager: ConfigurationManagerType {
-    private let exchangeMoneyService: ExchangeMoneyServiceType
-    private let exchangeMoneyRepository: ExchangeMoneyRepositoryType
+    private let currencyExchangeService: CurrencyExchangeServiceType
+    private let currencyExchangeRepository: CurrencyExchangeRepositoryType
 
-    init(exchangeMoneyService: ExchangeMoneyServiceType,
-         exchangeMoneyRepository: ExchangeMoneyRepositoryType) {
-        self.exchangeMoneyService = exchangeMoneyService
-        self.exchangeMoneyRepository = exchangeMoneyRepository
+    init(currencyExchangeService: CurrencyExchangeServiceType,
+         currencyExchangeRepository: CurrencyExchangeRepositoryType) {
+        self.currencyExchangeService = currencyExchangeService
+        self.currencyExchangeRepository = currencyExchangeRepository
     }
 
     func saveHowmuchModuleConfiguration(_ config: HowmuchModuleConfiguration) {
-        exchangeMoneyRepository.saveHowmuchModuleConfiguration(config)
+        currencyExchangeRepository.saveHowmuchModuleConfiguration(config)
     }
 
 }
