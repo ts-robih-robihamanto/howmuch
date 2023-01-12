@@ -14,8 +14,8 @@ internal class HowmuchModule {
         self.currencyExchangeService = currencyExchangeService
     }
 
-    func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int) -> Double {
+    func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int) -> Result<Double, CurrencyExchangeServiceError> {
         let result = currencyExchangeService.convertCurrency(from: from, to: to, amount: amount)
-        return 0.0
+        return result
     }
 }
