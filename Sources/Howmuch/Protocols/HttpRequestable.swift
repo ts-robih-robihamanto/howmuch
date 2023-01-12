@@ -58,7 +58,7 @@ extension HttpRequestable {
                                addtionalHeaders: [HeaderAttribute]?) -> RequestResult {
 
         if Thread.current.isMainThread {
-//            RLogger.debug(message: "Performing HTTP task synchronously on main thread. This should be avoided.")
+            RLogger.debug(message: "Performing HTTP task synchronously on main thread. This should be avoided.")
             assertionFailure()
         }
 
