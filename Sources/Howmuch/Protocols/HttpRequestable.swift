@@ -52,35 +52,6 @@ extension HttpRequestable {
 /// Default implementation of HttpRequestable.
 extension HttpRequestable {
 
-    func requestFromServerSync(url: URL,
-                               httpMethod: HttpMethod,
-                               parameters: [String: Any]? = nil,
-                               addtionalHeaders: [HeaderAttribute]?) -> RequestResult {
-
-        if Thread.current.isMainThread {
-            RLogger.debug(message: "Performing HTTP task synchronously on main thread. This should be avoided.")
-            assertionFailure()
-        }
-
-        var result: RequestResult?
-
-        requestFromServer(
-            url: url,
-            httpMethod: httpMethod,
-            parameters: parameters,
-            addtionalHeaders: addtionalHeaders,
-            shouldWait: true,
-            completion: { result = $0 })
-
-        guard let unwrappedResult = result else {
-            RLogger.debug(message: "Error: Didn't get any result - completion handler not called!")
-            assertionFailure()
-            return .failure(.unknown)
-        }
-
-        return unwrappedResult
-    }
-
     func requestFromServer(url: URL,
                            httpMethod: HttpMethod,
                            parameters: [String: Any]? = nil,
@@ -91,7 +62,7 @@ extension HttpRequestable {
                           httpMethod: httpMethod,
                           parameters: parameters,
                           addtionalHeaders: addtionalHeaders,
-                          shouldWait: false,
+                          shouldWait: true,
                           completion: completion)
     }
 
