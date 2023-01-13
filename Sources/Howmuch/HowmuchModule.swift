@@ -6,7 +6,7 @@ internal class HowmuchModule {
     private let currencyExchangeRepository: CurrencyExchangeRepositoryType
     private let currencyExchangeService: CurrencyExchangeServiceType
 
-    init(configurationManager: ConfigurationManager,
+    init(configurationManager: ConfigurationManagerType,
          currencyExchangeRepository: CurrencyExchangeRepositoryType,
          currencyExchangeService: CurrencyExchangeServiceType) {
         self.configurationManager = configurationManager
