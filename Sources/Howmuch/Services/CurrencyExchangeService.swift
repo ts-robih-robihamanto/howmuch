@@ -29,9 +29,16 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
             return.failure(.missingOrInvalidApiURL)
         }
 
+        let parameters: [String: Any] = [
+            "from" : from,
+            "to": to,
+            "amount": amount
+        ]
+
         let response = requestFromServerSync(
             url: convertCurrencyURL,
             httpMethod: .get,
+            parameters: parameters,
             addtionalHeaders: buildRequestHeader())
         
         switch response {
@@ -105,6 +112,35 @@ extension CurrencyExchangeService: HttpRequestable {
         }
 
         return headerBuilder.build()
+    }
+
+    func buildURLRequest(url: URL, with parameters: [String: Any]?) -> Result<URLRequest, Error> {
+        do {
+            let request = try getCurrencyDataConvertRequest(parameters: parameters)
+            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
+            urlComponents?.queryItems = request.toQueryItems
+            guard let url = urlComponents?.url else {
+                return .failure(RequestError.urlIsNil)
+            }
+            return .success(URLRequest(url: url))
+        } catch let error {
+            RLogger.debug(message: "failed creating a request - \(error)")
+            return .failure(error)
+        }
+    }
+    
+    private func getCurrencyDataConvertRequest(parameters: [String: Any]?) throws -> CurrencyDataConvertRequest {
+        guard let parameters,
+              let from = parameters["from"] as? String,
+              let to = parameters["to"] as? String,
+              let amount = parameters["amount"] as? Int else {
+            throw RequestError.missingMetadata
+        }
+        
+        return CurrencyDataConvertRequest(
+            from: from,
+            to: to,
+            amount: amount)
     }
 
 }

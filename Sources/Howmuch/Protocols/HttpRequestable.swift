@@ -38,7 +38,7 @@ internal protocol HttpRequestable {
                            addtionalHeaders: [HeaderAttribute]?,
                            completion: @escaping (_ result: RequestResult) -> Void)
 
-    func buildURLRequest(url: URL) -> Result<URLRequest, Error>
+    func buildURLRequest(url: URL, with parameters: [String: Any]?) -> Result<URLRequest, Error>
 
     func buildHttpBody(with parameters: [String: Any]?) -> Result<Data, Error>
 }
@@ -73,7 +73,7 @@ extension HttpRequestable {
                                    shouldWait: Bool,
                                    completion: @escaping (_ result: RequestResult) -> Void) {
         var request: URLRequest
-        let result = buildURLRequest(url: url)
+        let result = buildURLRequest(url: url, with: parameters)
         switch result {
         case .success(let urlRequest):
             request = urlRequest
