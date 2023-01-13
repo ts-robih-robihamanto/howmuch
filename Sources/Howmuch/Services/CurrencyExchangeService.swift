@@ -2,7 +2,7 @@ import Foundation
 import RLogger
 
 internal protocol CurrencyExchangeServiceType {
-    func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int) -> Result<Double, CurrencyExchangeServiceError>
+    func convertCurrency(from fromCode: CurrencyCode, to toCode: CurrencyCode, amount: Int) -> Result<Double, CurrencyExchangeServiceError>
 }
 
 internal enum CurrencyExchangeServiceError: Error {
@@ -23,15 +23,15 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
         self.httpSession = URLSession(configuration: currencyExchangeRepository.defaultHttpSessionConfiguration)
     }
 
-    func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int) -> Result<Double, CurrencyExchangeServiceError> {
+    func convertCurrency(from fromCode: CurrencyCode, to toCode: CurrencyCode, amount: Int) -> Result<Double, CurrencyExchangeServiceError> {
         let convertCurrencyURLString = ApiEndpoint.baseURL + "/convert"
         guard let convertCurrencyURL = URL(string: convertCurrencyURLString) else {
             return.failure(.missingOrInvalidApiURL)
         }
 
         let parameters: [String: Any] = [
-            "from" : from.rawValue,
-            "to": to.rawValue,
+            "from" : fromCode.code,
+            "to": toCode.code,
             "amount": amount
         ]
 
