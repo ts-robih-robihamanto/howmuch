@@ -30,8 +30,8 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
         }
 
         let parameters: [String: Any] = [
-            "from" : from,
-            "to": to,
+            "from" : from.rawValue,
+            "to": to.rawValue,
             "amount": amount
         ]
 

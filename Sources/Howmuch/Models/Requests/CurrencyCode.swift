@@ -1,6 +1,6 @@
 import Foundation
 
-public enum CurrencyCode {
+public enum CurrencyCode: String {
     case jpy
     case usd
     case gbp
