@@ -6,4 +6,8 @@ public enum CurrencyCode: String {
     case gbp
     case eur
     case idr
+
+    var code: String {
+        self.rawValue.uppercased()
+    }
 }
