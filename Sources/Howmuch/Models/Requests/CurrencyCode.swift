@@ -7,7 +7,7 @@ public enum CurrencyCode: String {
     case eur
     case idr
 
-    var code: String {
+    public var code: String {
         self.rawValue.uppercased()
     }
 }
