@@ -14,13 +14,23 @@ let package = Package(
             targets: ["Howmuch"]),
     ],
     dependencies: [
-        .package(name: "RSDKUtils" ,url: "https://github.com/rakutentech/ios-sdkutils.git", .upToNextMajor(from: "4.0.0")),
+        .package(url: "https://github.com/rakutentech/ios-sdkutils.git", .upToNextMajor(from: "4.0.0")),
+        .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.1.0")),
+        .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "6.1.0")),
     ],
     targets: [
         .target(
             name: "Howmuch",
             dependencies: [
-                .product(name: "RSDKUtilsMain", package: "RSDKUtils")
+                .product(name: "RSDKUtilsMain", package: "ios-sdkutils")
+            ]
+        ),
+        .testTarget(
+            name: "Tests",
+            dependencies: [
+                "Howmuch",
+                "Nimble",
+                "Quick",
             ]
         ),
     ],
