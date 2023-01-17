@@ -2,7 +2,11 @@ import Foundation
 import RLogger
 
 internal protocol CurrencyExchangeServiceType {
-    func convertCurrency(from fromCode: CurrencyCode, to toCode: CurrencyCode, amount: Int) -> Result<Double, CurrencyExchangeServiceError>
+    func convertCurrency(
+        from fromCode: CurrencyCode,
+        to toCode: CurrencyCode,
+        amount: Int,
+        completion: @escaping (Result<Double, CurrencyExchangeServiceError>) -> Void)
 }
 
 internal enum CurrencyExchangeServiceError: Error {
@@ -23,10 +27,11 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
         self.httpSession = URLSession(configuration: currencyExchangeRepository.defaultHttpSessionConfiguration)
     }
 
-    func convertCurrency(from fromCode: CurrencyCode, to toCode: CurrencyCode, amount: Int) -> Result<Double, CurrencyExchangeServiceError> {
+    func convertCurrency(from fromCode: CurrencyCode, to toCode: CurrencyCode, amount: Int, completion: @escaping (Result<Double, CurrencyExchangeServiceError>) -> Void) {
         let convertCurrencyURLString = ApiEndpoint.baseURL + "/convert"
         guard let convertCurrencyURL = URL(string: convertCurrencyURLString) else {
-            return.failure(.missingOrInvalidApiURL)
+            completion(.failure(.missingOrInvalidApiURL))
+            return
         }
 
         let parameters: [String: Any] = [
@@ -35,25 +40,28 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
             "amount": amount
         ]
 
-        let response = requestFromServerSync(
+        requestFromServer(
             url: convertCurrencyURL,
             httpMethod: .get,
             parameters: parameters,
-            addtionalHeaders: buildRequestHeader())
-        
-        switch response {
-        case .success((let data, _)):
-            return parseResponse(data).mapError {
-                return CurrencyExchangeServiceError.jsonDecodingError($0)
+            addtionalHeaders: buildRequestHeader()) { result in
+                switch result {
+                case .success((let data, _)):
+                    switch parseResponse(data) {
+                    case .success(let result):
+                        completion(.success(result))
+                    case .failure(let error):
+                        completion(.failure(CurrencyExchangeServiceError.jsonDecodingError(error)))
+                    }
+                case .failure(let requestError):
+                    switch requestError {
+                    case .httpError(let statusCode, _, _) where statusCode >= 500:
+                        completion(.failure(.internalServerError(statusCode)))
+                    default:
+                        completion(.failure(.requestError(requestError)))
+                    }
+                }
             }
-        case .failure(let requestError):
-            switch requestError {
-            case .httpError(let statusCode, _, _) where statusCode >= 500:
-                return .failure(.internalServerError(statusCode))
-            default:
-                return .failure(.requestError(requestError))
-            }
-        }
     }
 
     private func parseResponse(_ response: Data) -> Result<Double, Error> {
@@ -70,34 +78,6 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
 }
 
 extension CurrencyExchangeService: HttpRequestable {
-    
-    func requestFromServerSync(url: URL,
-                               httpMethod: HttpMethod,
-                               parameters: [String: Any]? = nil,
-                               addtionalHeaders: [HeaderAttribute]?) -> RequestResult {
-
-        if Thread.current.isMainThread {
-            RLogger.debug(message: "Performing HTTP task synchronously on main thread. This should be avoided.")
-            assertionFailure()
-        }
-
-        var result: RequestResult?
-
-        requestFromServer(
-            url: url,
-            httpMethod: httpMethod,
-            parameters: parameters,
-            addtionalHeaders: addtionalHeaders,
-            completion: { result = $0 })
-
-        guard let unwrappedResult = result else {
-            RLogger.debug(message: "Error: Didn't get any result - completion handler not called!")
-            assertionFailure()
-            return .failure(.unknown)
-        }
-
-        return unwrappedResult
-    }
 
     func buildHttpBody(with parameters: [String : Any]?) -> Result<Data, Error> {
         .failure(RequestError.bodyIsNil)

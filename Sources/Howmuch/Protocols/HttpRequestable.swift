@@ -27,11 +27,6 @@ internal protocol HttpRequestable {
 
     var httpSession: URLSession { get }
 
-    func requestFromServerSync(url: URL,
-                               httpMethod: HttpMethod,
-                               parameters: [String: Any]?,
-                               addtionalHeaders: [HeaderAttribute]?) -> RequestResult
-
     func requestFromServer(url: URL,
                            httpMethod: HttpMethod,
                            parameters: [String: Any]?,
@@ -53,24 +48,9 @@ extension HttpRequestable {
 extension HttpRequestable {
 
     func requestFromServer(url: URL,
-                           httpMethod: HttpMethod,
-                           parameters: [String: Any]? = nil,
-                           addtionalHeaders: [HeaderAttribute]?,
-                           completion: @escaping (_ result: RequestResult) -> Void) {
-
-        requestFromServer(url: url,
-                          httpMethod: httpMethod,
-                          parameters: parameters,
-                          addtionalHeaders: addtionalHeaders,
-                          shouldWait: true,
-                          completion: completion)
-    }
-
-    private func requestFromServer(url: URL,
                                    httpMethod: HttpMethod,
                                    parameters: [String: Any]?,
                                    addtionalHeaders: [HeaderAttribute]?,
-                                   shouldWait: Bool,
                                    completion: @escaping (_ result: RequestResult) -> Void) {
         var request: URLRequest
         let result = buildURLRequest(url: url, with: parameters)
@@ -100,16 +80,8 @@ extension HttpRequestable {
             appendHeaders(headers, forRequest: &request)
         }
 
-        // Semaphore added for synchronous HTTP calls.
-        let semaphore = DispatchSemaphore(value: 0)
-
         // Start HTTP call.
         httpSession.dataTask(with: request, completionHandler: { (data, response, error) in
-
-            defer {
-                // Signal completion of HTTP request.
-                semaphore.signal()
-            }
 
             if let error = error {
                 completion(.failure(.taskFailed(error)))
@@ -131,12 +103,6 @@ extension HttpRequestable {
 
             completion(.success((dataToReturn, serverResponse)))
         }).resume()
-
-        // Pause execution until signal() is called
-        // if the request requires the response to act on.
-        if shouldWait {
-            semaphore.wait()
-        }
     }
 
     private func appendHeaders(_ headers: [HeaderAttribute]?, forRequest request: inout URLRequest) {

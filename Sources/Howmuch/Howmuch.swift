@@ -51,15 +51,16 @@ public final class Howmuch: NSObject {
     ///   - from: The currency code of the currency you would like to convert from.
     ///   - to: The currency code of the currency you would like to convert to.
     ///   - amount: The amount to be converted.
-    /// - Returns: Returning the conversion result
+    /// - Returns: Returning the conversion result, will be returning nil if the process failed
     public static func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int, completion: @escaping (Double?) -> (Void)) {
         inAppQueue.async {
-            let result = initializeModule?.convertCurrency(from: from, to: to, amount: amount)
-            do {
-                let exchangeResult = try result?.get()
-                completion(exchangeResult)
-            } catch {
-                completion(nil)
+            initializeModule?.convertCurrency(from: from, to: to, amount: amount) { result in
+                switch result {
+                case .success(let convertedCurrency):
+                    completion(convertedCurrency)
+                case .failure(_):
+                    completion(nil)
+                }
             }
         }
     }

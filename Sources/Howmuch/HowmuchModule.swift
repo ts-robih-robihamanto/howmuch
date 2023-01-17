@@ -14,8 +14,14 @@ internal class HowmuchModule {
         self.currencyExchangeService = currencyExchangeService
     }
 
-    func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int) -> Result<Double, CurrencyExchangeServiceError> {
-        let result = currencyExchangeService.convertCurrency(from: from, to: to, amount: amount)
-        return result
+    func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int, completion: @escaping (Result<Double, CurrencyExchangeServiceError>) -> Void) {
+        currencyExchangeService.convertCurrency(from: from, to: to, amount: amount) { result in
+            switch result {
+            case .success(let convertedCurrency):
+                completion(.success(convertedCurrency))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
 }
