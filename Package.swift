@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "Howmuch",
             dependencies: [
-                .product(name: "RSDKUtilsMain", package: "RSDKUtils"),
+                .product(name: "RSDKUtilsMain", package: "RSDKUtils")
             ]
         ),
     ],
