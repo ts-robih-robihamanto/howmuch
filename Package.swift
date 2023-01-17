@@ -31,6 +31,7 @@ let package = Package(
                 "Howmuch",
                 "Nimble",
                 "Quick",
+                .product(name: "RSDKUtilsTestHelpers", package: "ios-sdkutils"),
             ]
         ),
     ],
