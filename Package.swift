@@ -32,7 +32,8 @@ let package = Package(
                 "Nimble",
                 "Quick",
                 .product(name: "RSDKUtilsTestHelpers", package: "ios-sdkutils"),
-            ]
+            ],
+            resources: [.process("Payloads")]
         ),
     ],
     swiftLanguageVersions: [
