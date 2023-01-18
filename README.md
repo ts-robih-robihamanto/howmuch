@@ -31,9 +31,11 @@ Howmuch.configure(apiKey: "your_api_key")
 
 # **Using the SDK**
 
-The SDK provides 1 public methods for the host applications to use:
+The SDK provides a public methods for the host applications to use:
 
-1. `convert(from: String, to: String, amount: Int)`
+```swift
+convert(from: String, to: String, amount: Int)
+```
 
 ### **convert(from: String, to: String, amount: Int)**  
 This method is provided for converting any currency to others.
@@ -46,6 +48,6 @@ func convert(from: String, to: String, amount: Int)
 
 ```swift
 Howmuch.convertCurrency(from: .jpy, to: .usd, amount: 100000) { result in
-    // Use thr result here
+    // Use the result here
 }
 ```
