@@ -1,0 +1,7 @@
+clean: true
+author: Robihamanto
+github_url: https://github.com/ts-robih-robihamanto/howmuch
+theme: apple
+readme: README.md
+documentation: "*.md"
+hide_documentation_coverage: true
