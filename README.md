@@ -24,7 +24,7 @@ To use the module you must set your app's api key the provided methods:
 ### Runtime configuration
 Provide a value for `apiKey` parameters when calling `Howmuch.configure` method. 
 ```swift
-        Howmuch.configure(apiKey: "your_api_key")
+Howmuch.configure(apiKey: "your_api_key")
 ```
 
 ⚠️ The runtime configuration values take precedence over build-time configuration.
