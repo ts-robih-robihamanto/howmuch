@@ -31,6 +31,7 @@ let package = Package(
                 "Howmuch",
                 "Nimble",
                 "Quick",
+                .product(name: "RLogger", package: "ios-sdkutils"),
                 .product(name: "RSDKUtilsTestHelpers", package: "ios-sdkutils"),
             ],
             resources: [.process("Payloads")]
