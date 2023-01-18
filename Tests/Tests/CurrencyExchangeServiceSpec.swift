@@ -7,7 +7,6 @@ import RSDKUtilsTestHelpers
 class CurrencyExchangeServiceSpec: QuickSpec {
 
     override func spec() {
-        let requestQueue = DispatchQueue(label: "howmuch.test.request")
         let moduleConfig = HowmuchModuleConfiguration(apiKey: "api_key")
 
         var service: CurrencyExchangeService!
@@ -22,7 +21,6 @@ class CurrencyExchangeServiceSpec: QuickSpec {
                 repository = CurrencyExchangeRepository()
                 repository.saveHowmuchModuleConfiguration(moduleConfig)
                 service = CurrencyExchangeService(currencyExchangeRepository: repository)
-
                 httpSession = URLSessionMock.mock(originalInstance: service.httpSession)
             }
 
@@ -45,20 +43,22 @@ class CurrencyExchangeServiceSpec: QuickSpec {
                     }
 
                     func fetchCurrencyExchange() {
-                        waitUntil { done in
-                            requestQueue.async {
-                                let response = service.convertCurrency(
-                                    from: CurrencyCode.jpy,
-                                    to: CurrencyCode.usd,
-                                    amount: 1000)
-                                expect {
-                                    currencyExchangeResult = try response.get()
-                                }.notTo(throwError())
-                                done()
+                        service.convertCurrency(from: CurrencyCode.jpy, to: CurrencyCode.usd, amount: 1000) { result in
+                            switch result {
+                            case .success(let data):
+                                currencyExchangeResult = data
+                            case .failure(_):
+                                ()
                             }
                         }
                     }
 
+                    it("will return a valid response with correct result value") {
+                        httpSession.responseData = TestHelpers.getJSONData(fileName: "currency_exchange_convert_success")
+                        fetchCurrencyExchange()
+
+                        expect(currencyExchangeResult).to(equal(11647700.9))
+                    }
 
                 }
             }
@@ -70,7 +70,7 @@ class CurrencyExchangeServiceSpec: QuickSpec {
 
 private class CurrenctExchangeURLResponse: HTTPURLResponse {
     init?(statusCode: Int) {
-        super.init(url: URL(string: "http://apiLayer.com/currency_data/convert")!,
+        super.init(url: URL(string: "https://api.apilayer.com/currency_data/convert")!,
                    statusCode: statusCode,
                    httpVersion: nil,
                    headerFields: nil)
