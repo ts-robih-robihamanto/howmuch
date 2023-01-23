@@ -28,7 +28,7 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
     }
 
     func convertCurrency(from fromCode: CurrencyCode, to toCode: CurrencyCode, amount: Int, completion: @escaping (Result<Double, CurrencyExchangeServiceError>) -> Void) {
-        let convertCurrencyURLString = ApiEndpoint.baseURL + "/convert"
+        let convertCurrencyURLString = ApiEndpoint.baseURLString + "/convert"
         guard let convertCurrencyURL = URL(string: convertCurrencyURLString) else {
             completion(.failure(.missingOrInvalidApiURL))
             return
