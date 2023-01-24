@@ -22,7 +22,7 @@ class CurrencyExchangeRepositorySpec: QuickSpec {
 
                 it("will properly save api key()") {
                     let config = HowmuchModuleConfiguration(apiKey: "api_key")
-                    currencyExchangeRepository.saveHowmuchModuleConfiguration(config)
+                    currencyExchangeRepository.save(config)
 
                     expect(currencyExchangeRepository.getApiKey()).to(equal("api_key"))
                 }

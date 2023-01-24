@@ -3,7 +3,7 @@ import Foundation
 internal protocol CurrencyExchangeRepositoryType: AnyObject {
     var defaultHttpSessionConfiguration: URLSessionConfiguration { get }
 
-    func saveHowmuchModuleConfiguration(_ config: HowmuchModuleConfiguration)
+    func save(_ configuration: HowmuchModuleConfiguration)
     func getApiKey() -> String?
 }
 
@@ -16,8 +16,8 @@ internal class CurrencyExchangeRepository: CurrencyExchangeRepositoryType {
         return configuration
     }()
 
-    func saveHowmuchModuleConfiguration(_ config: HowmuchModuleConfiguration) {
-        self.howmuchModuleConfiguration = config
+    func save(_ configuration: HowmuchModuleConfiguration) {
+        self.howmuchModuleConfiguration = configuration
     }
 
     func getApiKey() -> String? {

@@ -12,6 +12,6 @@ internal class ConfigurationManager: ConfigurationManagerType {
     }
 
     func save(_ configuration: HowmuchModuleConfiguration) {
-        currencyExchangeRepository.saveHowmuchModuleConfiguration(configuration)
+        currencyExchangeRepository.save(configuration)
     }
 }

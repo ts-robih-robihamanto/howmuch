@@ -19,7 +19,7 @@ class CurrencyExchangeServiceSpec: QuickSpec {
                 URLSessionMock.startMockingURLSession()
 
                 repository = CurrencyExchangeRepository()
-                repository.saveHowmuchModuleConfiguration(moduleConfig)
+                repository.save(moduleConfig)
                 service = CurrencyExchangeService(currencyExchangeRepository: repository)
                 httpSession = URLSessionMock.mock(originalInstance: service.httpSession)
             }
