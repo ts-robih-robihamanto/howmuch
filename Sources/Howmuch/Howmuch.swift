@@ -37,7 +37,7 @@ public final class Howmuch: NSObject {
                 assertionFailure("Howmuch Messaging SDK module initialization failure: Dependencies could not be resolved")
                 return
             }
-            configurationManager.saveHowmuchModuleConfiguration(moduleConfig)
+            configurationManager.save(moduleConfig)
 
             initializeModule = HowmuchModule(
                 configurationManager: configurationManager,

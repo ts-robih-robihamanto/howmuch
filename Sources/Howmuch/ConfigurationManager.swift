@@ -1,7 +1,7 @@
 import Foundation
 
 internal protocol ConfigurationManagerType {
-    func saveHowmuchModuleConfiguration(_ config: HowmuchModuleConfiguration)
+    func save(_ config: HowmuchModuleConfiguration)
 }
 
 internal class ConfigurationManager: ConfigurationManagerType {
@@ -14,7 +14,7 @@ internal class ConfigurationManager: ConfigurationManagerType {
         self.currencyExchangeRepository = currencyExchangeRepository
     }
 
-    func saveHowmuchModuleConfiguration(_ configuration: HowmuchModuleConfiguration) {
+    func save(_ configuration: HowmuchModuleConfiguration) {
         currencyExchangeRepository.saveHowmuchModuleConfiguration(configuration)
     }
 }
