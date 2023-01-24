@@ -3,7 +3,7 @@ import RSDKUtilsMain
 
 public final class Howmuch: NSObject {
 
-    internal private(set) static var initializeModule: HowmuchModule?
+    internal private(set) static var initializedModule: HowmuchModule?
     private(set) static var dependencyManager: TypedDependencyManager?
     internal static let inAppQueue = DispatchQueue(label: "Howmuch.Main", qos: .utility, attributes: [])
 
@@ -13,7 +13,7 @@ public final class Howmuch: NSObject {
     /// thad configure Howmuch SDK.
     /// - Parameter apiKey: your APILayer api key
     public static func configure(apiKey: String? = nil) {
-        guard initializeModule == nil else {
+        guard initializedModule == nil else {
             return
         }
         let config = HowmuchModuleConfiguration(apiKey: apiKey)
@@ -27,7 +27,7 @@ public final class Howmuch: NSObject {
         self.dependencyManager = dependencyManager
 
         inAppQueue.async {
-            guard initializeModule == nil else {
+            guard initializedModule == nil else {
                 return
             }
 
@@ -39,7 +39,7 @@ public final class Howmuch: NSObject {
             }
             configurationManager.save(moduleConfig)
 
-            initializeModule = HowmuchModule(
+            initializedModule = HowmuchModule(
                 configurationManager: configurationManager,
                 currencyExchangeRepository: currencyExchangeRepository,
                 currencyExchangeService: currencyExchangeService)
@@ -54,7 +54,7 @@ public final class Howmuch: NSObject {
     /// - Returns: Returning the conversion result, will be returning nil if the process failed
     public static func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int, completion: @escaping (Double?) -> (Void)) {
         inAppQueue.async {
-            initializeModule?.convertCurrency(from: from, to: to, amount: amount) { result in
+            initializedModule?.convertCurrency(from: from, to: to, amount: amount) { result in
                 switch result {
                 case .success(let convertedCurrency):
                     completion(convertedCurrency)
