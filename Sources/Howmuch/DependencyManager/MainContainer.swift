@@ -14,8 +14,7 @@ internal enum MainContainerFactory {
                 CurrencyExchangeService(currencyExchangeRepository: manager.resolve(type: CurrencyExchangeRepositoryType.self)!)
             }),
             ContainerElement(type: ConfigurationManagerType.self, factory: {
-                ConfigurationManager(currencyExchangeService: manager.resolve(type: CurrencyExchangeServiceType.self)!,
-                                     currencyExchangeRepository: manager.resolve(type: CurrencyExchangeRepositoryType.self)!)
+                ConfigurationManager(currencyExchangeRepository: manager.resolve(type: CurrencyExchangeRepositoryType.self)!)
             })
         ]
         return TypedDependencyManager.Container(elements)

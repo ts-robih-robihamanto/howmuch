@@ -5,12 +5,9 @@ internal protocol ConfigurationManagerType {
 }
 
 internal class ConfigurationManager: ConfigurationManagerType {
-    private let currencyExchangeService: CurrencyExchangeServiceType
     private let currencyExchangeRepository: CurrencyExchangeRepositoryType
 
-    init(currencyExchangeService: CurrencyExchangeServiceType,
-         currencyExchangeRepository: CurrencyExchangeRepositoryType) {
-        self.currencyExchangeService = currencyExchangeService
+    init(currencyExchangeRepository: CurrencyExchangeRepositoryType) {
         self.currencyExchangeRepository = currencyExchangeRepository
     }
 
