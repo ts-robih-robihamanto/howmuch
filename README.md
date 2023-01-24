@@ -34,16 +34,16 @@ Howmuch.configure(apiKey: "your_api_key")
 The SDK provides a public methods for the host applications to use:
 
 ```swift
-convert(from: String, to: String, amount: Int)
+func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int, completion: @escaping (Double?) -> (Void))
 ```
 
-### **convert(from: String, to: String, amount: Int)**  
+### **func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int, completion: @escaping (Double?) -> (Void))**  
 This method is provided for converting any currency to others.
 
 **The method signature is:**
 
 ```swift
-func convert(from: String, to: String, amount: Int)
+func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int, completion: @escaping (Double?) -> (Void))
 ```
 
 ```swift
