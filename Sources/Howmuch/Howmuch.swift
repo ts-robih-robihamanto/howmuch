@@ -12,7 +12,7 @@ public final class Howmuch: NSObject {
     /// Funtions to be called by host application to start a new thread
     /// that configure Howmuch SDK.
     /// - Parameter apiKey: your APILayer api key
-    public static func configure(apiKey: String? = nil) {
+    public static func configure(apiKey: String) {
         guard initializedModule == nil else {
             return
         }

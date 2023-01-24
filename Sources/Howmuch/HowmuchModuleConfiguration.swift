@@ -1,5 +1,5 @@
 import Foundation
 
 internal struct HowmuchModuleConfiguration {
-    let apiKey: String?
+    let apiKey: String
 }
