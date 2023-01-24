@@ -10,7 +10,7 @@ public final class Howmuch: NSObject {
     private override init() { super.init() }
 
     /// Funtions to be called by host application to start a new thread
-    /// thad configure Howmuch SDK.
+    /// that configure Howmuch SDK.
     /// - Parameter apiKey: your APILayer api key
     public static func configure(apiKey: String? = nil) {
         guard initializedModule == nil else {
