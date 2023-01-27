@@ -83,14 +83,14 @@ extension CurrencyExchangeService: HttpRequestable {
     }
 
     private func buildRequestHeader() -> [HeaderAttribute] {
-        var headerBuilder = HeaderAttributesBuilder()
-
-        if !headerBuilder.addApiKey(currencyExchangeRepository: currencyExchangeRepository) {
-            RLogger.debug(message: "Must contain a valid apiKey for ApiLayer")
-            assertionFailure()
+        do {
+            var headerBuilder = HeaderAttributesBuilder()
+            try headerBuilder.addApiKey(currencyExchangeRepository: currencyExchangeRepository)
+            return headerBuilder.addedHeaders
+        } catch let error {
+            RLogger.debug(message: "Failed building header - \(error)")
+            return []
         }
-
-        return headerBuilder.addedHeaders
     }
 
     func buildURLRequest(url: URL, with parameters: [String: Any]?) -> Result<URLRequest, Error> {
@@ -103,7 +103,7 @@ extension CurrencyExchangeService: HttpRequestable {
             }
             return .success(URLRequest(url: url))
         } catch let error {
-            RLogger.debug(message: "failed creating a request - \(error)")
+            RLogger.debug(message: "Failed creating a request - \(error)")
             return .failure(error)
         }
     }

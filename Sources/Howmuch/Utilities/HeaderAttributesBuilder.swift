@@ -1,13 +1,15 @@
+enum HeaderAttributesBuilderError: Error {
+    case emptyApiKey
+}
+
 struct HeaderAttributesBuilder {
     private typealias Keys = Constants.Request.Header
     private(set) var addedHeaders: [HeaderAttribute] = []
 
-    @discardableResult
-    mutating func addApiKey(currencyExchangeRepository: CurrencyExchangeRepositoryType) -> Bool {
+    mutating func addApiKey(currencyExchangeRepository: CurrencyExchangeRepositoryType) throws {
         guard let apiKey = currencyExchangeRepository.apiKey() else {
-            return false
+            throw HeaderAttributesBuilderError.emptyApiKey
         }
         addedHeaders.append(HeaderAttribute(key: Keys.apikey, value: apiKey))
-        return true
     }
 }
