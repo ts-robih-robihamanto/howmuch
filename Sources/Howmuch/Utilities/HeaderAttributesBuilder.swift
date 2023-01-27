@@ -4,7 +4,7 @@ struct HeaderAttributesBuilder {
 
     @discardableResult
     mutating func addApiKey(currencyExchangeRepository: CurrencyExchangeRepositoryType) -> Bool {
-        guard let apiKey = currencyExchangeRepository.getApiKey() else {
+        guard let apiKey = currencyExchangeRepository.apiKey() else {
             return false
         }
         addedHeaders.append(HeaderAttribute(key: Keys.apikey, value: apiKey))

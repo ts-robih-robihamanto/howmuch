@@ -4,7 +4,7 @@ internal protocol CurrencyExchangeRepositoryType: AnyObject {
     var defaultHttpSessionConfiguration: URLSessionConfiguration { get }
 
     func save(_ configuration: HowmuchModuleConfiguration)
-    func getApiKey() -> String?
+    func apiKey() -> String?
 }
 
 internal class CurrencyExchangeRepository: CurrencyExchangeRepositoryType {
@@ -20,7 +20,7 @@ internal class CurrencyExchangeRepository: CurrencyExchangeRepositoryType {
         self.howmuchModuleConfiguration = configuration
     }
 
-    func getApiKey() -> String? {
+    func apiKey() -> String? {
         return howmuchModuleConfiguration?.apiKey
     }
     
