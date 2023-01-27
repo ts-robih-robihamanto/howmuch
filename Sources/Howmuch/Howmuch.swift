@@ -31,16 +31,14 @@ public final class Howmuch: NSObject {
                 return
             }
 
-            guard let configurationManager = dependencyManager.resolve(type: ConfigurationManagerType.self),
-                  let currencyExchangeRepository = dependencyManager.resolve(type: CurrencyExchangeRepositoryType.self),
+            guard let currencyExchangeRepository = dependencyManager.resolve(type: CurrencyExchangeRepositoryType.self),
                   let currencyExchangeService = dependencyManager.resolve(type: CurrencyExchangeServiceType.self) else {
                 assertionFailure("Howmuch Messaging SDK module initialization failure: Dependencies could not be resolved")
                 return
             }
-            configurationManager.save(moduleConfig)
+            currencyExchangeRepository.save(moduleConfig)
 
             initializedModule = HowmuchModule(
-                configurationManager: configurationManager,
                 currencyExchangeRepository: currencyExchangeRepository,
                 currencyExchangeService: currencyExchangeService)
         }
