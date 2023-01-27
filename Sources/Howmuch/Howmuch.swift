@@ -26,11 +26,11 @@ public final class Howmuch: NSObject {
 
     private static func notifyIfModuleNotInitialized() -> Bool {
         guard initializedModule == nil else {
-            let description = "⚠️ API method called before calling `configure()`"
-            RLogger.debug(message: description)
-            return false
+            return true
         }
-        return true
+        let description = "⚠️ API method called before calling `configure()`"
+        RLogger.debug(message: description)
+        return false
     }
 
     internal static func configure(dependencyManager: TypedDependencyManager, moduleConfig: HowmuchModuleConfiguration) {
