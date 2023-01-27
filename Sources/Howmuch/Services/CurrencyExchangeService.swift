@@ -74,7 +74,6 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
             return .failure(error)
         }
     }
-
 }
 
 extension CurrencyExchangeService: HttpRequestable {
@@ -91,7 +90,7 @@ extension CurrencyExchangeService: HttpRequestable {
             assertionFailure()
         }
 
-        return headerBuilder.build()
+        return headerBuilder.addedHeaders
     }
 
     func buildURLRequest(url: URL, with parameters: [String: Any]?) -> Result<URLRequest, Error> {
