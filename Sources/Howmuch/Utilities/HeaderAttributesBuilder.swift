@@ -1,6 +1,6 @@
 struct HeaderAttributesBuilder {
     private typealias Keys = Constants.Request.Header
-    private var addedHeaders: [HeaderAttribute] = []
+    private(set) var addedHeaders: [HeaderAttribute] = []
 
     @discardableResult
     mutating func addApiKey(currencyExchangeRepository: CurrencyExchangeRepositoryType) -> Bool {
@@ -9,9 +9,5 @@ struct HeaderAttributesBuilder {
         }
         addedHeaders.append(HeaderAttribute(key: Keys.apikey, value: apiKey))
         return true
-    }
-
-    func build() -> [HeaderAttribute] {
-        addedHeaders
     }
 }
