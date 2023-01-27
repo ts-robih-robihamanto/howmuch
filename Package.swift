@@ -22,6 +22,7 @@ let package = Package(
         .target(
             name: "Howmuch",
             dependencies: [
+                .product(name: "RLogger", package: "ios-sdkutils"),
                 .product(name: "RSDKUtilsMain", package: "ios-sdkutils")
             ]
         ),
