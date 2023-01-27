@@ -60,18 +60,18 @@ public final class Howmuch: NSObject {
     ///   - to: The currency code of the currency you would like to convert to.
     ///   - amount: The amount to be converted.
     /// - Returns: Returning the conversion result, will be returning nil if the process failed
-    public static func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int, completion: @escaping (Double?) -> (Void)) {
+    public static func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int, completion: @escaping (Result<Double, Error>) -> (Void)) {
         inAppQueue.async {
             guard notifyIfModuleNotInitialized() else {
-                completion(nil)
+                completion(.failure(NSError.howmuchError(description: "⚠️ API method called before calling `configure()`")))
                 return
             }
             initializedModule?.convertCurrency(from: from, to: to, amount: amount) { result in
                 switch result {
                 case .success(let convertedCurrency):
-                    completion(convertedCurrency)
-                case .failure(_):
-                    completion(nil)
+                    completion(.success(convertedCurrency))
+                case .failure(let error):
+                    completion(.failure(error))
                 }
             }
         }
