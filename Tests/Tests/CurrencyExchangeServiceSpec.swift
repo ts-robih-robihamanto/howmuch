@@ -47,7 +47,7 @@ class CurrencyExchangeServiceSpec: QuickSpec {
                             switch result {
                             case .success(let data):
                                 currencyExchangeResult = data
-                            case .failure(_):
+                            case .failure:
                                 ()
                             }
                         }
@@ -58,6 +58,42 @@ class CurrencyExchangeServiceSpec: QuickSpec {
                         fetchCurrencyExchange()
 
                         expect(currencyExchangeResult).to(equal(11647700.9))
+                    }
+
+                }
+            }
+
+            context("when request failed") {
+
+                beforeEach {
+                    httpSession.httpResponse = CurrenctExchangeURLResponse(statusCode: 500)
+                }
+
+                context("and error is exist") {
+
+                    var currencyExchangeErrorResult: CurrencyExchangeServiceError?
+
+                    beforeEach {
+                        currencyExchangeErrorResult = nil
+                    }
+
+                    func fetchCurrencyExchange() {
+                        service.convertCurrency(from: CurrencyCode.jpy, to: CurrencyCode.usd, amount: 1000) { result in
+                            switch result {
+                            case .success:
+                                ()
+                            case .failure(let error):
+                                currencyExchangeErrorResult = error
+                            }
+                        }
+                    }
+
+                    it("will return CurrencyExchangeServiceError response") {
+                        httpSession.responseData = TestHelpers.getJSONData(fileName: "currency_exchange_convert_failure")
+                        fetchCurrencyExchange()
+
+                        expect(currencyExchangeErrorResult).toNot(beNil())
+                        expect(currencyExchangeErrorResult?.localizedDescription.contains("CurrencyExchangeServiceError")).to(beTrue())
                     }
 
                 }
