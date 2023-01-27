@@ -1,4 +1,5 @@
 import Foundation
+import RLogger
 import RSDKUtilsMain
 
 public final class Howmuch: NSObject {
@@ -21,6 +22,15 @@ public final class Howmuch: NSObject {
         let mainContainer = MainContainerFactory.create(dependencyManager: dependencyManager)
         dependencyManager.appendContainer(mainContainer)
         configure(dependencyManager: dependencyManager, moduleConfig: config)
+    }
+
+    private static func notifyIfModuleNotInitialized() -> Bool {
+        guard initializedModule == nil else {
+            let description = "⚠️ API method called before calling `configure()`"
+            RLogger.debug(message: description)
+            return false
+        }
+        return true
     }
 
     internal static func configure(dependencyManager: TypedDependencyManager, moduleConfig: HowmuchModuleConfiguration) {
@@ -52,6 +62,10 @@ public final class Howmuch: NSObject {
     /// - Returns: Returning the conversion result, will be returning nil if the process failed
     public static func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int, completion: @escaping (Double?) -> (Void)) {
         inAppQueue.async {
+            guard notifyIfModuleNotInitialized() else {
+                completion(nil)
+                return
+            }
             initializedModule?.convertCurrency(from: from, to: to, amount: amount) { result in
                 switch result {
                 case .success(let convertedCurrency):
