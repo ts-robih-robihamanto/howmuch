@@ -7,9 +7,7 @@ struct HeaderAttributesBuilder {
     private(set) var addedHeaders: [HeaderAttribute] = []
 
     mutating func addApiKey(currencyExchangeRepository: CurrencyExchangeRepositoryType) throws {
-        guard let apiKey = currencyExchangeRepository.apiKey() else {
-            throw HeaderAttributesBuilderError.emptyApiKey
-        }
+        let apiKey = try currencyExchangeRepository.apiKey()
         addedHeaders.append(HeaderAttribute(key: Keys.apikey, value: apiKey))
     }
 }
