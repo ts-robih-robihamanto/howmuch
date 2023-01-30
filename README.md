@@ -27,8 +27,6 @@ Provide a value for `apiKey` parameters when calling `Howmuch.configure` method.
 Howmuch.configure(apiKey: "your_api_key")
 ```
 
-⚠️ The runtime configuration values take precedence over build-time configuration.
-
 # **Using the SDK**
 
 The SDK provides a public methods for the host applications to use:
