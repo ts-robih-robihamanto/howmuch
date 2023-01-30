@@ -2,13 +2,13 @@ import Foundation
 import RLogger
 import RSDKUtilsMain
 
-public final class Howmuch: NSObject {
+public final class Howmuch {
 
     internal private(set) static var initializedModule: HowmuchModule?
     private(set) static var dependencyManager: TypedDependencyManager?
     internal static let inAppQueue = DispatchQueue(label: "Howmuch.Main", qos: .utility, attributes: [])
 
-    private override init() { super.init() }
+    private init() { }
 
     /// Funtions to be called by host application to start a new thread
     /// that configure Howmuch SDK.
