@@ -35,7 +35,6 @@ public final class Howmuch {
 
     internal static func configure(dependencyManager: TypedDependencyManager, moduleConfig: HowmuchModuleConfiguration) {
         self.dependencyManager = dependencyManager
-
         inAppQueue.async {
             guard initializedModule == nil else {
                 return
