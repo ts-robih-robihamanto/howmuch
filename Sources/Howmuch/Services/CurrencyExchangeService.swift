@@ -18,6 +18,12 @@ internal enum CurrencyExchangeServiceError: Error {
 
 internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
 
+    internal enum ParametersKey: String {
+        case from
+        case to
+        case amount
+    }
+
     private let currencyExchangeRepository: CurrencyExchangeRepositoryType
     private(set) var httpSession: URLSession
     private typealias ApiEndpoint = Constants.ApiEndpoint
@@ -35,9 +41,9 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
         }
 
         let parameters: [String: Any] = [
-            "from" : fromCode.code,
-            "to": toCode.code,
-            "amount": amount
+            ParametersKey.from.rawValue: fromCode.code,
+            ParametersKey.to.rawValue: toCode.code,
+            ParametersKey.amount.rawValue: amount
         ]
 
         requestFromServer(
@@ -110,9 +116,9 @@ extension CurrencyExchangeService: HttpRequestable {
     
     private func getCurrencyDataConvertRequest(parameters: [String: Any]?) throws -> CurrencyDataConvertRequest {
         guard let parameters,
-              let from = parameters["from"] as? String,
-              let to = parameters["to"] as? String,
-              let amount = parameters["amount"] as? Int else {
+              let from = parameters[ParametersKey.from.rawValue] as? String,
+              let to = parameters[ParametersKey.to.rawValue] as? String,
+              let amount = parameters[ParametersKey.amount.rawValue] as? Int else {
             throw RequestError.missingMetadata
         }
         
