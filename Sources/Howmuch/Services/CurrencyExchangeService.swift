@@ -46,11 +46,18 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
             ParametersKey.amount.rawValue: amount
         ]
 
+        var headers: [HeaderAttribute] = []
+        do {
+            headers = try buildRequestHeader()
+        } catch {
+            completion(.failure(CurrencyExchangeServiceError.requestError(RequestError.missingMetadata)))
+        }
+
         requestFromServer(
             url: convertCurrencyURL,
             httpMethod: .get,
             parameters: parameters,
-            addtionalHeaders: buildRequestHeader()) { result in
+            addtionalHeaders: headers) { result in
                 switch result {
                 case .success((let data, _)):
                     switch parseResponse(data) {
@@ -88,15 +95,10 @@ extension CurrencyExchangeService: HttpRequestable {
         .failure(RequestError.bodyIsNil)
     }
 
-    private func buildRequestHeader() -> [HeaderAttribute] {
-        do {
-            var headerBuilder = HeaderAttributesBuilder()
-            try headerBuilder.addApiKey(currencyExchangeRepository: currencyExchangeRepository)
-            return headerBuilder.addedHeaders
-        } catch let error {
-            RLogger.debug(message: "Failed building header - \(error)")
-            return []
-        }
+    private func buildRequestHeader() throws -> [HeaderAttribute] {
+        var headerBuilder = HeaderAttributesBuilder()
+        try headerBuilder.addApiKey(currencyExchangeRepository: currencyExchangeRepository)
+        return headerBuilder.addedHeaders
     }
 
     func buildURLRequest(url: URL, with parameters: [String: Any]?) -> Result<URLRequest, Error> {
