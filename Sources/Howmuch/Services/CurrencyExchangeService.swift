@@ -60,7 +60,7 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
             addtionalHeaders: headers) { result in
                 switch result {
                 case .success((let data, _)):
-                    switch parseResponse(data) {
+                    switch parse(response: data) {
                     case .success(let result):
                         completion(.success(result))
                     case .failure(let error):
@@ -77,7 +77,7 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
             }
     }
 
-    private func parseResponse(_ response: Data) -> Result<Double, Error> {
+    private func parse(response: Data) -> Result<Double, Error> {
         do {
             let response = try JSONDecoder().decode(CurrencyExchangeResponse.self, from: response)
             return .success(response.result)
