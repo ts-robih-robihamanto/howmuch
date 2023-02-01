@@ -6,7 +6,6 @@ public final class Howmuch {
 
     internal private(set) static var initializedModule: HowmuchModule?
     private(set) static var dependencyManager: TypedDependencyManager?
-    internal static let inAppQueue = DispatchQueue(label: "Howmuch.Main", qos: .utility, attributes: [])
 
     private init() { }
 
@@ -35,22 +34,20 @@ public final class Howmuch {
 
     internal static func configure(dependencyManager: TypedDependencyManager, moduleConfig: HowmuchModuleConfiguration) {
         self.dependencyManager = dependencyManager
-        inAppQueue.async {
-            guard initializedModule == nil else {
-                return
-            }
-
-            guard let currencyExchangeRepository = dependencyManager.resolve(type: CurrencyExchangeRepositoryType.self),
-                  let currencyExchangeService = dependencyManager.resolve(type: CurrencyExchangeServiceType.self) else {
-                assertionFailure("Howmuch Messaging SDK module initialization failure: Dependencies could not be resolved")
-                return
-            }
-            currencyExchangeRepository.save(moduleConfig)
-
-            initializedModule = HowmuchModule(
-                currencyExchangeRepository: currencyExchangeRepository,
-                currencyExchangeService: currencyExchangeService)
+        guard initializedModule == nil else {
+            return
         }
+
+        guard let currencyExchangeRepository = dependencyManager.resolve(type: CurrencyExchangeRepositoryType.self),
+              let currencyExchangeService = dependencyManager.resolve(type: CurrencyExchangeServiceType.self) else {
+            assertionFailure("Howmuch Messaging SDK module initialization failure: Dependencies could not be resolved")
+            return
+        }
+        currencyExchangeRepository.save(moduleConfig)
+
+        initializedModule = HowmuchModule(
+            currencyExchangeRepository: currencyExchangeRepository,
+            currencyExchangeService: currencyExchangeService)
     }
     
     /// Convert any amount from one currency to another.
@@ -60,18 +57,16 @@ public final class Howmuch {
     ///   - amount: The amount to be converted.
     /// - Returns: Returning the conversion result, will be returning nil if the process failed
     public static func convertCurrency(from: CurrencyCode, to: CurrencyCode, amount: Int, completion: @escaping (Result<Double, Error>) -> (Void)) {
-        inAppQueue.async {
-            guard notifyIfModuleNotInitialized() else {
-                completion(.failure(NSError.howmuchError(description: "⚠️ API method called before calling `configure()`")))
-                return
-            }
-            initializedModule?.convertCurrency(from: from, to: to, amount: amount) { result in
-                switch result {
-                case .success(let convertedCurrency):
-                    completion(.success(convertedCurrency))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
+        guard notifyIfModuleNotInitialized() else {
+            completion(.failure(NSError.howmuchError(description: "⚠️ API method called before calling `configure()`")))
+            return
+        }
+        initializedModule?.convertCurrency(from: from, to: to, amount: amount) { result in
+            switch result {
+            case .success(let convertedCurrency):
+                completion(.success(convertedCurrency))
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
     }
