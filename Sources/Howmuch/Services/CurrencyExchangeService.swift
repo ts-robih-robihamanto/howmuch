@@ -51,6 +51,7 @@ internal struct CurrencyExchangeService: CurrencyExchangeServiceType {
             headers = try buildRequestHeader()
         } catch {
             completion(.failure(CurrencyExchangeServiceError.requestError(RequestError.missingMetadata)))
+            return
         }
 
         requestFromServer(
