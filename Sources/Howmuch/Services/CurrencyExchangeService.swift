@@ -99,7 +99,7 @@ extension CurrencyExchangeService: HttpRequestable {
     private func buildRequestHeader() throws -> [HeaderAttribute] {
         var headerBuilder = HeaderAttributesBuilder()
         let apiKey = try currencyExchangeRepository.apiKey()
-        try headerBuilder.add(apiKey: apiKey)
+        headerBuilder.add(apiKey: apiKey)
         return headerBuilder.addedHeaders
     }
 
