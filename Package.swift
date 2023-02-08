@@ -5,24 +5,40 @@ import PackageDescription
 
 let package = Package(
     name: "Howmuch",
+    platforms: [
+        .iOS(.v13)
+    ],
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "Howmuch",
             targets: ["Howmuch"]),
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
+        .package(url: "https://github.com/rakutentech/ios-sdkutils.git", .upToNextMajor(from: "4.0.0")),
+        .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.1.0")),
+        .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "6.1.0")),
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "Howmuch",
-            dependencies: []),
+            dependencies: [
+                .product(name: "RLogger", package: "ios-sdkutils"),
+                .product(name: "RSDKUtilsMain", package: "ios-sdkutils")
+            ]
+        ),
         .testTarget(
-            name: "HowmuchTests",
-            dependencies: ["Howmuch"]),
+            name: "Tests",
+            dependencies: [
+                "Howmuch",
+                "Nimble",
+                "Quick",
+                .product(name: "RLogger", package: "ios-sdkutils"),
+                .product(name: "RSDKUtilsTestHelpers", package: "ios-sdkutils"),
+            ],
+            resources: [.process("Payloads")]
+        ),
+    ],
+    swiftLanguageVersions: [
+        .v5
     ]
 )

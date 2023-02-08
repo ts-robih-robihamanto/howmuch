@@ -1,0 +1,13 @@
+{
+    "success": true,
+    "query": {
+        "from": "JPY",
+        "to": "IDR",
+        "amount": 100000
+    },
+    "info": {
+        "timestamp": 1673505962,
+        "quote": 116.477009
+    },
+    "result": 11647700.9
+}
